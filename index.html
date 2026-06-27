@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מוסכּומטר — השוואת מחירים במוסכים</title>
+<meta name="description" content="חברים משתפים כמה שילמו על תיקון רכב ובאיזה מוסך — ורואים אילו מוסכים יקרים או זולים באופן עקבי.">
+<style>
+  :root{
+    --grape:#6C4BD6; --grape-dk:#4F33A8;
+    --tang:#FF7A2F; --lime:#2FCB7A; --coral:#FF5470; --sun:#FFC23D;
+    --ink:#221A3D; --muted:#8A82A8;
+    --ground:#F4F2FF; --card:#FFFFFF; --line:#EAE6FB;
+    --r:22px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    direction:rtl;
+    font-family:"SF Hebrew","Arial Hebrew","Assistant",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(900px 500px at 90% -10%, #EFE7FF 0%, transparent 60%),
+      radial-gradient(700px 500px at -10% 20%, #FFEFE2 0%, transparent 55%),
+      var(--ground);
+    line-height:1.55;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  h1,h2,h3{text-wrap:balance;line-height:1.1;margin:0}
+  .tnum{font-variant-numeric:tabular-nums}
+  a{color:var(--grape)}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:800;
+    letter-spacing:.04em;color:var(--grape);background:#fff;border:2px solid var(--line);
+    padding:7px 14px;border-radius:999px}
+  .btn{border:0;cursor:pointer;font:inherit;font-weight:800;border-radius:14px;padding:14px 22px;
+    background:var(--grape);color:#fff;box-shadow:0 10px 22px -8px var(--grape);transition:transform .12s;text-decoration:none;display:inline-block}
+  .btn:hover{transform:translateY(-2px)}
+  .btn.ghost{background:#fff;color:var(--grape);border:2px solid var(--line);box-shadow:none}
+  .btn[disabled]{opacity:.55;cursor:not-allowed;transform:none}
+
+  /* nav */
+  .nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:rgba(244,242,255,.82);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:12px;padding-bottom:12px}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:18px}
+  .brand .logo{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--grape),var(--tang));
+    display:grid;place-items:center;font-size:18px}
+  .tabs{display:flex;gap:6px;background:#fff;border:1px solid var(--line);border-radius:13px;padding:5px}
+  .tabs button{border:0;background:transparent;font:inherit;font-weight:800;font-size:14px;color:var(--muted);
+    padding:9px 16px;border-radius:9px;cursor:pointer}
+  .tabs button.on{background:var(--grape);color:#fff}
+
+  /* HERO */
+  header.hero{padding:46px 0 26px;text-align:center}
+  .hero h1{font-size:clamp(34px,5.5vw,58px);font-weight:900;letter-spacing:-.02em;margin:16px 0 12px}
+  .hero h1 .pop{color:var(--grape);position:relative;white-space:nowrap}
+  .hero h1 .pop::after{content:"";position:absolute;right:-2%;left:-2%;bottom:6%;height:36%;
+    background:var(--sun);border-radius:8px;z-index:-1;transform:rotate(-1.2deg)}
+  .lede{font-size:18px;color:#4a4368;max-width:54ch;margin:0 auto 24px}
+  .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .stats{display:flex;gap:26px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px 24px;min-width:120px}
+  .stat .n{font-size:30px;font-weight:900;color:var(--grape)}
+  .stat .l{font-size:13px;color:var(--muted);font-weight:700}
+
+  section{padding:18px 0 40px}
+  .panel{display:none}
+  .panel.on{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* FORM */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px;
+    box-shadow:0 30px 60px -42px rgba(34,26,61,.45)}
+  .form-head{margin-bottom:20px}
+  .form-head h2{font-size:26px;font-weight:900}
+  .form-head p{color:#4a4368;margin:6px 0 0;font-size:15px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .field{margin-bottom:16px}
+  .field>label{display:block;font-size:13px;font-weight:800;margin-bottom:7px}
+  .field .req{color:var(--coral)}
+  .pills{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:9px 15px;
+    font-size:13px;font-weight:800;color:#4a4368;cursor:pointer;transition:.12s}
+  .pill:hover{border-color:var(--grape)}
+  .pill.on{background:var(--grape);border-color:var(--grape);color:#fff}
+  input,select{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;
+    font:inherit;font-weight:600;color:var(--ink);background:#FAF9FF;outline:none}
+  input:focus,select:focus{border-color:var(--grape);background:#fff}
+  .money{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:12px;
+    padding:4px 13px;background:#FAF9FF}
+  .money:focus-within{border-color:var(--grape);background:#fff}
+  .money .cur{font-weight:900;color:var(--tang);font-size:20px}
+  .money input{border:0;background:transparent;font-weight:900;font-size:20px;padding:9px 0}
+  .hint{display:flex;gap:9px;align-items:flex-start;background:#FFF6E6;border:1px solid #FBE3AE;
+    border-radius:12px;padding:11px 13px;font-size:13px;color:#7a5a13;font-weight:600;margin:4px 0 18px}
+  .msg{margin-top:14px;padding:13px 15px;border-radius:13px;font-weight:800;font-size:14px;display:none}
+  .msg.ok{display:block;background:#E4FAEF;color:#157a4c;border:1px solid #b6ecce}
+  .msg.err{display:block;background:#FFE7EC;color:#c5234a;border:1px solid #f6c2cf}
+
+  /* RESULTS */
+  .res-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:18px}
+  .res-head h2{font-size:26px;font-weight:900}
+  .seg{display:flex;gap:6px;background:#F2EFFF;border-radius:12px;padding:5px;flex-wrap:wrap}
+  .seg button{border:0;background:transparent;font:inherit;font-weight:800;font-size:13px;color:var(--muted);
+    padding:8px 14px;border-radius:9px;cursor:pointer}
+  .seg button.on{background:#fff;color:var(--grape);box-shadow:0 4px 10px -6px rgba(0,0,0,.3)}
+  table{width:100%;border-collapse:collapse}
+  thead th{font-size:12px;color:var(--muted);font-weight:800;text-align:right;padding:0 12px 12px;border-bottom:1px solid var(--line)}
+  tbody td{padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .rankcell{display:flex;align-items:center;gap:12px}
+  .rank{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-weight:900;font-size:14px;background:#F2EFFF;color:var(--grape);flex:0 0 auto}
+  .rank.top{background:var(--lime);color:#08311e}
+  .g-name{font-weight:900;font-size:15px}
+  .g-loc{font-size:12px;color:var(--muted)}
+  .price{font-weight:900;font-size:16px}
+  .delta{font-size:12.5px;font-weight:900;display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:999px;white-space:nowrap}
+  .delta.cheap{background:#E4FAEF;color:#157a4c}
+  .delta.dear{background:#FFE7EC;color:#c5234a}
+  .delta.mid{background:#F2EFFF;color:#6657b0}
+  .reports{font-size:13px;color:#4a4368;font-weight:700}
+
+  .chart{margin-top:24px;background:#FBFAFF;border:1px solid var(--line);border-radius:20px;padding:22px}
+  .chart h4{margin:0 0 4px;font-size:16px;font-weight:900}
+  .chart .csub{font-size:12.5px;color:var(--muted);margin:0 0 18px;font-weight:700}
+  .bars{display:flex;flex-direction:column;gap:13px}
+  .bar-row{display:grid;grid-template-columns:150px 1fr 72px;gap:12px;align-items:center}
+  .bar-row .bl{font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar-row .bl small{display:block;color:var(--muted);font-weight:700;font-size:11px}
+  .track{height:26px;background:#fff;border:1px solid var(--line);border-radius:999px;overflow:hidden;position:relative}
+  .track i{display:block;height:100%;border-radius:999px}
+  .avg-line{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink);opacity:.4}
+  .bar-row .bv{font-weight:900;font-size:14px;text-align:start}
+
+  .empty{text-align:center;padding:50px 20px;color:var(--muted)}
+  .empty .big{font-size:46px}
+  .empty h3{font-size:20px;font-weight:900;color:var(--ink);margin:12px 0 6px}
+  .loading{text-align:center;padding:40px;color:var(--muted);font-weight:700}
+
+  .banner{background:#FFE7EC;border:1px solid #f6c2cf;color:#c5234a;border-radius:14px;
+    padding:13px 16px;font-weight:800;font-size:14px;margin:16px auto;max-width:1080px}
+
+  footer{padding:30px 0 60px;text-align:center;color:var(--muted);font-size:13px}
+
+  @media (max-width:760px){
+    .grid2{grid-template-columns:1fr}
+    .bar-row{grid-template-columns:104px 1fr 60px}
+    .nav .brand span.t{display:none}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="brand"><span class="logo">🔧</span><span class="t">מוסכּומטר</span></div>
+    <div class="tabs">
+      <button id="tab-add" class="on" onclick="show('add')">➕ הוספת תיקון</button>
+      <button id="tab-res" onclick="show('res')">📊 דירוג</button>
+    </div>
+  </div>
+</nav>
+
+<div id="config-banner" class="banner" style="display:none">
+  ⚠️ האתר עדיין לא חובר ל-Supabase — ערוך את <b>config.js</b> עם ה-URL וה-anon key.
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">🚗 פרויקט של חברים · בטא</span>
+    <h1>כמה <span class="pop">באמת</span> עולה לתקן את האוטו?</h1>
+    <p class="lede">כל אחד מזין תיקון אחד שעשה — מה תוקן, כמה זה עלה ובאיזה מוסך. אנחנו מחברים את כולם ומראים אילו מוסכים יקרים יותר, ואיפה חוסכים.</p>
+    <div class="cta-row">
+      <button class="btn" onclick="show('add')">➕ הוספת התיקון שלי</button>
+      <button class="btn ghost" onclick="show('res')">ראו את הדירוג</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n tnum" id="stat-reports">–</div><div class="l">תיקונים דווחו</div></div>
+      <div class="stat"><div class="n tnum" id="stat-garages">–</div><div class="l">מוסכים</div></div>
+      <div class="stat"><div class="n tnum" id="stat-saved">–</div><div class="l">פער יקר↔זול</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ADD PANEL -->
+  <section id="panel-add" class="panel on">
+    <div class="card" style="max-width:640px;margin:0 auto">
+      <div class="form-head">
+        <h2>ספרו לנו מה תיקנתם 🔧</h2>
+        <p>30 שניות. ככל שיותר חברים ממלאים — ההשוואה מדויקת יותר.</p>
+      </div>
+
+      <div class="field">
+        <label>מה תוקן? <span class="req">*</span></label>
+        <div class="pills" id="repair-pills"></div>
+      </div>
+
+      <div class="field">
+        <label>כמה זה עלה (כולל מע״מ)? <span class="req">*</span></label>
+        <div class="money"><span class="cur">₪</span><input id="f-cost" inputmode="numeric" placeholder="640" aria-label="עלות בשקלים"></div>
+      </div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>שם המוסך <span class="req">*</span></label>
+          <input id="f-name" placeholder="המוסך של דני" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>טלפון המוסך</label>
+          <input id="f-phone" inputmode="tel" placeholder="03-9301122" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="hint">📞 הטלפון הוא העוגן שמחבר בין דיווחים לאותו מוסך — גם אם כל אחד כתב שם אחר. שווה למלא!</div>
+
+      <div class="grid2">
+        <div class="field">
+          <label>אזור / עיר</label>
+          <input id="f-area" placeholder="פתח תקווה" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>דגם הרכב</label>
+          <input id="f-car" placeholder="מאזדה 3, 2017" autocomplete="off">
+        </div>
+      </div>
+
+      <button class="btn" id="submit-btn" style="width:100%" onclick="submitRepair()">שליחה ✓</button>
+      <div id="form-msg" class="msg"></div>
+    </div>
+  </section>
+
+  <!-- RESULTS PANEL -->
+  <section id="panel-res" class="panel">
+    <div class="card">
+      <div class="res-head">
+        <h2>🏆 דירוג המוסכים</h2>
+        <div class="seg" id="type-seg"></div>
+      </div>
+      <div id="res-body"><div class="loading">טוען נתונים…</div></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">מוסכּומטר 🚗 · פרויקט קוד פתוח של חברים · <a id="repo-link" href="#">GitHub</a></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+// ── סוגי תיקון ────────────────────────────────────────────────
+const REPAIR_TYPES = [
+  "החלפת שמן","רפידות בלם","מצמד","טיפול מזגן","צמיגים",
+  "בולם זעזועים","מצבר","טיימינג","מערכת היגוי","אחר"
+];
+let selectedRepair = null;
+let allRows = [];
+let activeType = "all";
+
+// ── Supabase init ─────────────────────────────────────────────
+const cfg = window.MOSACH_CONFIG || {};
+const configured = cfg.SUPABASE_URL && !cfg.SUPABASE_URL.includes("YOUR-PROJECT");
+let sb = null;
+if (configured) sb = supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+else document.getElementById("config-banner").style.display = "block";
+
+// ── tabs ──────────────────────────────────────────────────────
+function show(which){
+  document.getElementById("panel-add").classList.toggle("on", which==="add");
+  document.getElementById("panel-res").classList.toggle("on", which==="res");
+  document.getElementById("tab-add").classList.toggle("on", which==="add");
+  document.getElementById("tab-res").classList.toggle("on", which==="res");
+  if(which==="res") loadResults();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+// ── repair pills ──────────────────────────────────────────────
+const pillBox = document.getElementById("repair-pills");
+REPAIR_TYPES.forEach(t=>{
+  const b=document.createElement("button");
+  b.className="pill";b.type="button";b.textContent=t;
+  b.onclick=()=>{selectedRepair=t;[...pillBox.children].forEach(c=>c.classList.toggle("on",c===b));};
+  pillBox.appendChild(b);
+});
+
+// ── submit ────────────────────────────────────────────────────
+async function submitRepair(){
+  const msg=document.getElementById("form-msg");
+  const cost=parseFloat(document.getElementById("f-cost").value.replace(/[^\d.]/g,""));
+  const name=document.getElementById("f-name").value.trim();
+  const phone=document.getElementById("f-phone").value.trim();
+  const area=document.getElementById("f-area").value.trim();
+  const car=document.getElementById("f-car").value.trim();
+
+  if(!selectedRepair){return flash(msg,"err","בחרו מה תוקן 🙂");}
+  if(!cost||cost<=0){return flash(msg,"err","הזינו עלות תקינה בשקלים");}
+  if(!name){return flash(msg,"err","הזינו את שם המוסך");}
+  if(!sb){return flash(msg,"err","האתר עדיין לא חובר למסד הנתונים (config.js)");}
+
+  const btn=document.getElementById("submit-btn");
+  btn.disabled=true;btn.textContent="שולח…";
+  const {error}=await sb.from("repairs").insert({
+    repair_type:selectedRepair, cost, garage_name:name,
+    garage_phone:phone||null, area:area||null, car:car||null
+  });
+  btn.disabled=false;btn.textContent="שליחה ✓";
+
+  if(error){flash(msg,"err","שגיאה בשמירה: "+error.message);return;}
+  flash(msg,"ok","תודה! התיקון נוסף 🎉 בדקו את הדירוג למעלה.");
+  selectedRepair=null;[...pillBox.children].forEach(c=>c.classList.remove("on"));
+  ["f-cost","f-name","f-phone","f-area","f-car"].forEach(id=>document.getElementById(id).value="");
+  allRows=[]; // force refresh next time
+  refreshStats();
+}
+function flash(el,kind,text){el.className="msg "+kind;el.textContent=text;}
+
+// ── matching: group rows into garages ─────────────────────────
+function normPhone(p){return p?p.replace(/\D/g,"").replace(/^972/,"0"):"";}
+function normName(n){return (n||"").toLowerCase().replace(/["'`.\-־]/g,"").replace(/\s+/g," ").trim();}
+function garageKey(r){
+  const ph=normPhone(r.garage_phone);
+  if(ph.length>=7) return "tel:"+ph;
+  return "nm:"+normName(r.garage_name)+"|"+normName(r.area);
+}
+
+// ── load + compute ────────────────────────────────────────────
+async function loadResults(){
+  const body=document.getElementById("res-body");
+  if(!sb){body.innerHTML=`<div class="empty"><div class="big">🔌</div><h3>לא מחובר למסד נתונים</h3><p>ערכו את config.js</p></div>`;return;}
+  if(allRows.length===0){
+    body.innerHTML=`<div class="loading">טוען נתונים…</div>`;
+    const {data,error}=await sb.from("repairs").select("*").order("created_at",{ascending:false});
+    if(error){body.innerHTML=`<div class="empty"><div class="big">😕</div><h3>שגיאה בטעינה</h3><p>${error.message}</p></div>`;return;}
+    allRows=data||[];
+  }
+  refreshStats();
+  render();
+}
+
+function refreshStats(){
+  const garages=new Set(allRows.map(garageKey));
+  document.getElementById("stat-reports").textContent=allRows.length;
+  document.getElementById("stat-garages").textContent=garages.size;
+  // overall index spread
+  const idx=garageIndices(allRows);
+  const vals=idx.map(g=>g.index);
+  const spread=vals.length>1?Math.round(Math.max(...vals)-Math.min(...vals)):0;
+  document.getElementById("stat-saved").textContent=spread?spread+"%":"–";
+}
+
+// average cost per repair_type across everyone (the fair baseline)
+function typeAverages(rows){
+  const m={};
+  rows.forEach(r=>{(m[r.repair_type]=m[r.repair_type]||[]).push(+r.cost);});
+  const out={};
+  for(const k in m) out[k]=m[k].reduce((a,b)=>a+b,0)/m[k].length;
+  return out;
+}
+
+// price index per garage: each repair normalized vs its type average → 100 = average
+function garageIndices(rows){
+  const avg=typeAverages(rows);
+  const groups={};
+  rows.forEach(r=>{
+    const k=garageKey(r);
+    (groups[k]=groups[k]||{key:k,name:r.garage_name,area:r.area,phone:r.garage_phone,rows:[]}).rows.push(r);
+  });
+  const out=[];
+  for(const k in groups){
+    const g=groups[k];
+    const ratios=g.rows.map(r=>avg[r.repair_type]?(+r.cost/avg[r.repair_type]):1);
+    g.index=Math.round(ratios.reduce((a,b)=>a+b,0)/ratios.length*100);
+    g.count=g.rows.length;
+    out.push(g);
+  }
+  return out.sort((a,b)=>a.index-b.index);
+}
+
+function deltaTag(index){
+  const d=index-100;
+  if(d<=-5) return `<span class="delta cheap">↓ ${Math.abs(d)}% זול</span>`;
+  if(d>=5)  return `<span class="delta dear">↑ ${d}% יקר</span>`;
+  return `<span class="delta mid">≈ ממוצע</span>`;
+}
+
+function render(){
+  const body=document.getElementById("res-body");
+  if(allRows.length===0){
+    body.innerHTML=`<div class="empty"><div class="big">🚗💨</div><h3>עדיין אין דיווחים</h3><p>היו הראשונים — הוסיפו תיקון ושלחו את הלינק לחברים.</p><br><button class="btn" onclick="show('add')">➕ הוספת תיקון</button></div>`;
+    document.getElementById("type-seg").innerHTML="";
+    return;
+  }
+
+  // type segmented control
+  const types=["all",...[...new Set(allRows.map(r=>r.repair_type))]];
+  document.getElementById("type-seg").innerHTML=types.map(t=>
+    `<button class="${t===activeType?'on':''}" onclick="setType('${t.replace(/'/g,"\\'")}')">${t==="all"?"הכול":t}</button>`
+  ).join("");
+
+  const rows = activeType==="all"?allRows:allRows.filter(r=>r.repair_type===activeType);
+  const garages = garageIndices(allRows); // leaderboard always on full data (fair)
+
+  // leaderboard
+  let html=`<div style="overflow-x:auto"><table><thead><tr>
+      <th>מוסך</th><th>מדד מחיר</th><th>ביחס לממוצע</th><th>דיווחים</th></tr></thead><tbody>`;
+  garages.forEach((g,i)=>{
+    html+=`<tr>
+      <td><div class="rankcell"><span class="rank ${i===0?'top':''}">${i+1}</span>
+        <div><div class="g-name">${esc(g.name)}</div><div class="g-loc">${esc(g.area||"")}${g.phone?" · "+esc(g.phone):""}</div></div></div></td>
+      <td><span class="price tnum">${g.index}</span></td>
+      <td>${deltaTag(g.index)}</td>
+      <td><span class="reports">${g.count} ${g.count===1?'דיווח':'דיווחים'}</span></td>
+    </tr>`;
+  });
+  html+=`</tbody></table></div>`;
+
+  // per-type bar chart
+  if(activeType!=="all"){
+    const avgAll = rows.reduce((a,r)=>a+ +r.cost,0)/rows.length;
+    // group this type's rows by garage
+    const gg={};
+    rows.forEach(r=>{const k=garageKey(r);(gg[k]=gg[k]||{name:r.garage_name,area:r.area,costs:[]}).costs.push(+r.cost);});
+    const list=Object.values(gg).map(g=>({...g,avg:g.costs.reduce((a,b)=>a+b,0)/g.costs.length}))
+                .sort((a,b)=>a.avg-b.avg);
+    const max=Math.max(...list.map(g=>g.avg),avgAll)*1.08;
+    html+=`<div class="chart"><h4>${esc(activeType)} — לפי מוסך</h4>
+      <p class="csub">מחיר ממוצע בקבוצה: ${Math.round(avgAll).toLocaleString()} ₪ · ${rows.length} דיווחים</p><div class="bars">`;
+    list.forEach(g=>{
+      const w=Math.max(6,g.avg/max*100);
+      const color=g.avg<avgAll*0.95?"linear-gradient(90deg,var(--lime),#5fe0a0)"
+                 :g.avg>avgAll*1.05?"linear-gradient(90deg,var(--coral),#ff7a93)"
+                 :"linear-gradient(90deg,var(--sun),#ffd06b)";
+      const txtcol=g.avg<avgAll*0.95?"#157a4c":g.avg>avgAll*1.05?"#c5234a":"var(--ink)";
+      html+=`<div class="bar-row">
+        <div class="bl">${esc(g.name)}<small>${esc(g.area||"")}</small></div>
+        <div class="track"><i style="width:${w}%;background:${color}"></i>
+          <span class="avg-line" style="inset-inline-start:${avgAll/max*100}%"></span></div>
+        <div class="bv" style="color:${txtcol}">${Math.round(g.avg).toLocaleString()} ₪</div>
+      </div>`;
+    });
+    html+=`</div></div>`;
+  } else {
+    html+=`<div class="chart"><p class="csub" style="margin:0">בחרו סוג תיקון למעלה כדי לראות השוואת מחירים פר-מוסך 👆</p></div>`;
+  }
+
+  body.innerHTML=html;
+}
+function setType(t){activeType=t;render();}
+function esc(s){return (s==null?"":""+s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+// boot
+if(sb){ loadResults(); }
+</script>
+</body>
+</html>
