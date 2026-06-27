@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מוסכּומטר — דירוג (תצוגה לדוגמה)</title>
+<style>
+  :root{
+    --grape:#6C4BD6; --grape-dk:#4F33A8;
+    --tang:#FF7A2F; --lime:#2FCB7A; --coral:#FF5470; --sun:#FFC23D;
+    --ink:#221A3D; --muted:#8A82A8;
+    --ground:#F4F2FF; --card:#FFFFFF; --line:#EAE6FB; --r:22px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{direction:rtl;font-family:"SF Hebrew","Arial Hebrew","Assistant",system-ui,-apple-system,"Segoe UI",sans-serif;
+    color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;
+    background:radial-gradient(900px 500px at 90% -10%,#EFE7FF 0%,transparent 60%),
+      radial-gradient(700px 500px at -10% 20%,#FFEFE2 0%,transparent 55%),var(--ground)}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  h1,h2,h3{text-wrap:balance;line-height:1.1;margin:0}
+  .tnum{font-variant-numeric:tabular-nums}
+  a{color:var(--grape)}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:800;letter-spacing:.04em;
+    color:var(--grape);background:#fff;border:2px solid var(--line);padding:7px 14px;border-radius:999px}
+  .btn{border:0;cursor:pointer;font:inherit;font-weight:800;border-radius:14px;padding:14px 22px;
+    background:var(--grape);color:#fff;box-shadow:0 10px 22px -8px var(--grape);text-decoration:none;display:inline-block;transition:transform .12s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn.ghost{background:#fff;color:var(--grape);border:2px solid var(--line);box-shadow:none}
+
+  .nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);background:rgba(244,242,255,.82);border-bottom:1px solid var(--line)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:12px;padding-bottom:12px}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:18px}
+  .brand .logo{width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,var(--grape),var(--tang));display:grid;place-items:center;font-size:18px}
+  .demo-tag{font-size:12px;font-weight:800;color:var(--tang);background:#FFEFE2;border:1px solid #FBD8BD;padding:6px 12px;border-radius:999px}
+
+  .demo-banner{background:#FFF6E6;border:1px solid #FBE3AE;color:#7a5a13;border-radius:14px;
+    padding:12px 16px;font-weight:700;font-size:13.5px;margin:18px auto;max-width:1080px;text-align:center}
+
+  header.hero{padding:34px 0 18px;text-align:center}
+  .hero h1{font-size:clamp(30px,4.6vw,46px);font-weight:900;letter-spacing:-.02em;margin:14px 0 10px}
+  .hero h1 .pop{color:var(--grape);position:relative;white-space:nowrap}
+  .hero h1 .pop::after{content:"";position:absolute;right:-2%;left:-2%;bottom:6%;height:36%;background:var(--sun);border-radius:8px;z-index:-1;transform:rotate(-1.2deg)}
+  .lede{font-size:17px;color:#4a4368;max-width:54ch;margin:0 auto 22px}
+  .stats{display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 24px;min-width:120px}
+  .stat .n{font-size:28px;font-weight:900;color:var(--grape)}
+  .stat .l{font-size:13px;color:var(--muted);font-weight:700}
+
+  section{padding:18px 0 50px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px;box-shadow:0 30px 60px -42px rgba(34,26,61,.45)}
+  .res-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:18px}
+  .res-head h2{font-size:26px;font-weight:900}
+  .seg{display:flex;gap:6px;background:#F2EFFF;border-radius:12px;padding:5px;flex-wrap:wrap}
+  .seg button{border:0;background:transparent;font:inherit;font-weight:800;font-size:13px;color:var(--muted);padding:8px 14px;border-radius:9px;cursor:pointer}
+  .seg button.on{background:#fff;color:var(--grape);box-shadow:0 4px 10px -6px rgba(0,0,0,.3)}
+  table{width:100%;border-collapse:collapse}
+  thead th{font-size:12px;color:var(--muted);font-weight:800;text-align:right;padding:0 12px 12px;border-bottom:1px solid var(--line)}
+  tbody td{padding:13px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .rankcell{display:flex;align-items:center;gap:12px}
+  .rank{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-weight:900;font-size:14px;background:#F2EFFF;color:var(--grape);flex:0 0 auto}
+  .rank.top{background:var(--lime);color:#08311e}
+  .g-name{font-weight:900;font-size:15px}
+  .g-loc{font-size:12px;color:var(--muted)}
+  .price{font-weight:900;font-size:16px}
+  .delta{font-size:12.5px;font-weight:900;display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:999px;white-space:nowrap}
+  .delta.cheap{background:#E4FAEF;color:#157a4c}
+  .delta.dear{background:#FFE7EC;color:#c5234a}
+  .delta.mid{background:#F2EFFF;color:#6657b0}
+  .reports{font-size:13px;color:#4a4368;font-weight:700}
+  .chart{margin-top:24px;background:#FBFAFF;border:1px solid var(--line);border-radius:20px;padding:22px}
+  .chart h4{margin:0 0 4px;font-size:16px;font-weight:900}
+  .chart .csub{font-size:12.5px;color:var(--muted);margin:0 0 18px;font-weight:700}
+  .bars{display:flex;flex-direction:column;gap:13px}
+  .bar-row{display:grid;grid-template-columns:160px 1fr 76px;gap:12px;align-items:center}
+  .bar-row .bl{font-size:13px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar-row .bl small{display:block;color:var(--muted);font-weight:700;font-size:11px}
+  .track{height:26px;background:#fff;border:1px solid var(--line);border-radius:999px;overflow:hidden;position:relative}
+  .track i{display:block;height:100%;border-radius:999px}
+  .avg-line{position:absolute;top:-5px;bottom:-5px;width:2px;background:var(--ink);opacity:.4}
+  .bar-row .bv{font-weight:900;font-size:14px;text-align:start}
+  footer{padding:20px 0 60px;text-align:center;color:var(--muted);font-size:13px}
+  @media (max-width:760px){.bar-row{grid-template-columns:108px 1fr 64px}.brand span.t{display:none}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <div class="brand"><span class="logo">🔧</span><span class="t">מוסכּומטר</span></div>
+    <span class="demo-tag">תצוגה לדוגמה</span>
+  </div>
+</nav>
+
+<div class="demo-banner">👀 זו תצוגה לדוגמה עם נתונים מומצאים, להמחשה בלבד — כך ייראה מסך הדירוג אחרי שחברים מילאו תיקונים.</div>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">🚗 38 תיקונים · 6 מוסכים</span>
+    <h1>מי <span class="pop">באמת</span> זול ומי יקר?</h1>
+    <p class="lede">מדד מחיר ביחס לממוצע הקבוצה, מנורמל לפי סוג התיקון — כך שההשוואה הוגנת בין מוסכים שעשו תיקונים שונים.</p>
+    <div class="stats">
+      <div class="stat"><div class="n tnum" id="stat-reports">–</div><div class="l">תיקונים דווחו</div></div>
+      <div class="stat"><div class="n tnum" id="stat-garages">–</div><div class="l">מוסכים</div></div>
+      <div class="stat"><div class="n tnum" id="stat-spread">–</div><div class="l">פער יקר↔זול</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section>
+    <div class="card">
+      <div class="res-head">
+        <h2>🏆 דירוג המוסכים</h2>
+        <div class="seg" id="type-seg"></div>
+      </div>
+      <div id="res-body"></div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap">
+    מוסכּומטר 🚗 · <a href="index.html">← חזרה לאתר האמיתי</a> · <a href="https://github.com/yfelig/mosachometer" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</footer>
+
+<script>
+// ── נתונים מומצאים: 38 דיווחים מ-6 מוסכים, חלק עם שמות שונים אך אותו טלפון ──
+const r=(repair_type,cost,garage_name,garage_phone,area,car)=>({repair_type,cost,garage_name,garage_phone,area,car});
+const SAMPLE = [
+  // אוטו־פיקס (זול עקבי)
+  r("החלפת שמן",370,"אוטו־פיקס","04-8512200","חיפה","קיה ספורטאז' 2018"),
+  r("החלפת שמן",360,"אוטו־פיקס","048512200","חיפה","טויוטה קורולה 2016"),
+  r("רפידות בלם",610,"אוטו־פיקס","04-8512200","חיפה","מאזדה 3 2017"),
+  r("מצמד",1890,"אוטו־פיקס","04-8512200","חיפה","יונדאי i20 2015"),
+  r("טיפול מזגן",490,"אוטו־פיקס","04-8512200","חיפה","סקודה אוקטביה 2019"),
+  r("צמיגים",1320,"אוטו־פיקס","04-8512200","חיפה","קיה ספורטאז' 2018"),
+  r("מצבר",480,"אוטו־פיקס","04-8512200","חיפה","טויוטה קורולה 2016"),
+
+  // מוסך אבו-חמיד (זול)
+  r("החלפת שמן",410,"מוסך אבו-חמיד","08-9255030","רמלה","פיג'ו 308 2017"),
+  r("החלפת שמן",430,"אבו חמיד מוסך","089255030","רמלה","רנו קליאו 2018"),
+  r("רפידות בלם",680,"מוסך אבו-חמיד","08-9255030","רמלה","מאזדה 3 2017"),
+  r("טיפול מזגן",540,"מוסך אבו-חמיד","08-9255030","רמלה","פורד פוקוס 2016"),
+  r("מצבר",540,"מוסך אבו-חמיד","08-9255030","רמלה","פיג'ו 308 2017"),
+  r("צמיגים",1450,"מוסך אבו-חמיד","08-9255030","רמלה","סובארו XV 2019"),
+
+  // המוסך של דני — 3 וריאציות שם, אותו טלפון (מודגם מיזוג)
+  r("רפידות בלם",730,"המוסך של דני","03-9301122","פתח תקווה","מאזדה 3 2017"),
+  r("החלפת שמן",440,"המוסך של דני","03-9301122","פתח תקווה","הונדה סיוויק 2018"),
+  r("מצמד",2230,"דני מוסך מצמדים","039301122","פ״ת","יונדאי i30 2016"),
+  r("מצמד",2180,"דני מוסך מצמדים","039301122","ליד הרכבת פ״ת","קיה סיד 2017"),
+  r("טיפול מזגן",580,"מוסך פ״ת (דני)","03-9301122","פתח תקווה","הונדה סיוויק 2018"),
+  r("רפידות בלם",720,"המוסך של דני","03-9301122","פתח תקווה","ניסאן קשקאי 2019"),
+
+  // מוסך הצומת (ממוצע)
+  r("החלפת שמן",460,"מוסך הצומת","08-6231180","באר שבע","סקודה פאביה 2018"),
+  r("רפידות בלם",770,"מוסך הצומת","08-6231180","באר שבע","מאזדה 3 2017"),
+  r("מצבר",620,"מוסך הצומת","08-6231180","באר שבע","טויוטה יאריס 2016"),
+  r("צמיגים",1640,"מוסך הצומת","08-6231180","באר שבע","מיצובישי אאוטלנדר 2019"),
+  r("טיפול מזגן",610,"מוסך הצומת","08-6231180","באר שבע","סקודה פאביה 2018"),
+  r("מצמד",2360,"מוסך הצומת","08-6231180","באר שבע","סוזוקי סוויפט 2017"),
+
+  // מוסך נחמיאס (יקר)
+  r("רפידות בלם",870,"מוסך נחמיאס","03-9658877","ראשון לציון","מאזדה 3 2017"),
+  r("מצמד",2670,"מוסך נחמיאס","03-9658877","ראשל״צ","יונדאי טוסון 2018"),
+  r("החלפת שמן",520,"מוסך נחמיאס","03-9658877","ראשון לציון","פולקסווגן גולף 2016"),
+  r("טיפול מזגן",700,"מוסך נחמיאס","03-9658877","ראשל״צ","אאודי A3 2017"),
+  r("צמיגים",1860,"מוסך נחמיאס","03-9658877","ראשון לציון","מרצדס A 2019"),
+
+  // מוסך מרכז העיר (הכי יקר)
+  r("רפידות בלם",980,"מוסך מרכז העיר","03-5274411","תל אביב","מאזדה 3 2017"),
+  r("מצמד",2950,"מוסך מרכז העיר","03-5274411","תל אביב","ב.מ.וו סדרה 1 2018"),
+  r("החלפת שמן",580,"מוסך מרכז העיר","03-5274411","ת״א","אאודי A4 2017"),
+  r("טיפול מזגן",770,"מוסך מרכז העיר","03-5274411","תל אביב","וולוו V40 2016"),
+  r("מצבר",760,"מוסך מרכז העיר","03-5274411","תל אביב","מיני קופר 2018"),
+  r("צמיגים",2050,"מוסך מרכז העיר","03-5274411","תל אביב","ב.מ.וו סדרה 3 2019"),
+  r("החלפת שמן",560,"מוסך מרכז העיר","03-5274411","ת״א","לקסוס IS 2017"),
+];
+
+let activeType="all";
+
+// ── חיבור מוסכים (זהה לאתר האמיתי) ──
+function normPhone(p){return p?p.replace(/\D/g,"").replace(/^972/,"0"):"";}
+function normName(n){return (n||"").toLowerCase().replace(/["'`.\-־]/g,"").replace(/\s+/g," ").trim();}
+function garageKey(x){const ph=normPhone(x.garage_phone);if(ph.length>=7)return "tel:"+ph;return "nm:"+normName(x.garage_name)+"|"+normName(x.area);}
+function typeAverages(rows){const m={};rows.forEach(x=>{(m[x.repair_type]=m[x.repair_type]||[]).push(+x.cost);});const o={};for(const k in m)o[k]=m[k].reduce((a,b)=>a+b,0)/m[k].length;return o;}
+function garageIndices(rows){
+  const avg=typeAverages(rows),groups={};
+  rows.forEach(x=>{const k=garageKey(x);(groups[k]=groups[k]||{key:k,name:x.garage_name,area:x.area,phone:x.garage_phone,rows:[]}).rows.push(x);});
+  const out=[];for(const k in groups){const g=groups[k];
+    const ratios=g.rows.map(x=>avg[x.repair_type]?(+x.cost/avg[x.repair_type]):1);
+    g.index=Math.round(ratios.reduce((a,b)=>a+b,0)/ratios.length*100);g.count=g.rows.length;out.push(g);}
+  return out.sort((a,b)=>a.index-b.index);
+}
+function deltaTag(i){const d=i-100;if(d<=-5)return `<span class="delta cheap">↓ ${Math.abs(d)}% זול</span>`;if(d>=5)return `<span class="delta dear">↑ ${d}% יקר</span>`;return `<span class="delta mid">≈ ממוצע</span>`;}
+function esc(s){return (s==null?"":""+s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+function refreshStats(){
+  document.getElementById("stat-reports").textContent=SAMPLE.length;
+  document.getElementById("stat-garages").textContent=new Set(SAMPLE.map(garageKey)).size;
+  const v=garageIndices(SAMPLE).map(g=>g.index);
+  document.getElementById("stat-spread").textContent=(Math.max(...v)-Math.min(...v))+"%";
+}
+
+function render(){
+  const types=["all",...[...new Set(SAMPLE.map(x=>x.repair_type))]];
+  document.getElementById("type-seg").innerHTML=types.map(t=>
+    `<button class="${t===activeType?'on':''}" onclick="setType('${t.replace(/'/g,"\\'")}')">${t==="all"?"הכול":t}</button>`).join("");
+
+  const garages=garageIndices(SAMPLE);
+  let html=`<div style="overflow-x:auto"><table><thead><tr><th>מוסך</th><th>מדד מחיר</th><th>ביחס לממוצע</th><th>דיווחים</th></tr></thead><tbody>`;
+  garages.forEach((g,i)=>{html+=`<tr>
+    <td><div class="rankcell"><span class="rank ${i===0?'top':''}">${i+1}</span>
+      <div><div class="g-name">${esc(g.name)}</div><div class="g-loc">${esc(g.area||"")}${g.phone?" · "+esc(g.phone):""}</div></div></div></td>
+    <td><span class="price tnum">${g.index}</span></td>
+    <td>${deltaTag(g.index)}</td>
+    <td><span class="reports">${g.count} ${g.count===1?'דיווח':'דיווחים'}</span></td></tr>`;});
+  html+=`</tbody></table></div>`;
+
+  if(activeType!=="all"){
+    const rows=SAMPLE.filter(x=>x.repair_type===activeType);
+    const avgAll=rows.reduce((a,x)=>a+ +x.cost,0)/rows.length;
+    const gg={};rows.forEach(x=>{const k=garageKey(x);(gg[k]=gg[k]||{name:x.garage_name,area:x.area,costs:[]}).costs.push(+x.cost);});
+    const list=Object.values(gg).map(g=>({...g,avg:g.costs.reduce((a,b)=>a+b,0)/g.costs.length})).sort((a,b)=>a.avg-b.avg);
+    const max=Math.max(...list.map(g=>g.avg),avgAll)*1.08;
+    html+=`<div class="chart"><h4>${esc(activeType)} — לפי מוסך</h4>
+      <p class="csub">מחיר ממוצע בקבוצה: ${Math.round(avgAll).toLocaleString()} ₪ · ${rows.length} דיווחים · הקו האנכי = הממוצע</p><div class="bars">`;
+    list.forEach(g=>{const w=Math.max(6,g.avg/max*100);
+      const color=g.avg<avgAll*0.95?"linear-gradient(90deg,var(--lime),#5fe0a0)":g.avg>avgAll*1.05?"linear-gradient(90deg,var(--coral),#ff7a93)":"linear-gradient(90deg,var(--sun),#ffd06b)";
+      const tc=g.avg<avgAll*0.95?"#157a4c":g.avg>avgAll*1.05?"#c5234a":"var(--ink)";
+      html+=`<div class="bar-row"><div class="bl">${esc(g.name)}<small>${esc(g.area||"")}</small></div>
+        <div class="track"><i style="width:${w}%;background:${color}"></i><span class="avg-line" style="inset-inline-start:${avgAll/max*100}%"></span></div>
+        <div class="bv" style="color:${tc}">${Math.round(g.avg).toLocaleString()} ₪</div></div>`;});
+    html+=`</div></div>`;
+  } else {
+    html+=`<div class="chart"><p class="csub" style="margin:0">בחרו סוג תיקון למעלה כדי לראות השוואת מחירים פר-מוסך 👆</p></div>`;
+  }
+  document.getElementById("res-body").innerHTML=html;
+}
+function setType(t){activeType=t;render();}
+refreshStats();render();
+</script>
+</body>
+</html>
